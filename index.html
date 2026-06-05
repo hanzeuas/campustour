@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Hanze</title>
+</head>
+<body>
+
+  <div id="screen-start" class="screen active splash-screen">
+    <div class="splash-content">
+      <img src="logo.svg" alt="Hanze logo" class="logo" />
+      <p class="tagline">
+        Ready to explore Hanze? Answer a few questions and discover the
+        buildings, facilities and student spaces made for you.
+      </p>
+      <div class="button-group">
+        <button class="start-btn" onclick="startQuiz()">START QUIZ</button>
+        <button class="explore-btn" onclick="openExplore()">EXPLORE CAMPUS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-quiz" class="screen quiz-screen">
+    <div class="quiz-header">
+      <img src="logo.svg" alt="Hanze logo" class="quiz-logo" />
+      <div class="progress-bar-row"></div>
+    </div>
+    <h2 class="quiz-question"></h2>
+    <p class="quiz-hint"></p>
+    <div class="quiz-body">
+      <div class="options-list"></div>
+    </div>
+    <div class="quiz-footer">
+      <button class="start-btn continue-btn" onclick="nextQuestion()">CONTINUE</button>
+    </div>
+  </div>
+
+  <div id="screen-loading" class="screen splash-screen">
+    <div class="loading-content">
+      <img src="logo.svg" alt="Hanze logo" class="logo" />
+      <p class="loading-text">Finding your best match</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-results" class="screen quiz-screen">
+    <div class="quiz-header">
+      <img src="logo.svg" alt="Hanze logo" class="quiz-logo" />
+    </div>
+    <div class="quiz-body">
+      <h2 class="results-title">Recommended for you</h2>
+      <div id="results-list" class="results-list"></div>
+    </div>
+    <div class="quiz-footer">
+      <button class="start-btn continue-btn" onclick="goTo('screen-start')">START OVER</button>
+    </div>
+  </div>
+
+  <div id="screen-explore" class="screen quiz-screen">
+    <div class="quiz-header">
+      <img src="logo.svg" alt="Hanze logo" class="quiz-logo" />
+    </div>
+    <div class="quiz-body">
+      <div class="explore-tabs">
+        <button class="tab-btn active" onclick="filterBuildings('Zernike Campus')">Zernike Campus</button>
+        <button class="tab-btn" onclick="filterBuildings('City Campus')">City Campus</button>
+      </div>
+      <div id="explore-list" class="results-list"></div>
+    </div>
+  </div>
+
+  <div id="screen-map" class="screen map-screen">
+    <img id="map-bg" class="map-bg" src="" alt="" />
+    <div class="map-overlay">
+      <div class="map-header">
+        <button class="map-back-btn" onclick="closeMap()">&#8592;</button>
+        <span class="map-title" id="map-title"></span>
+      </div>
+      <div id="hotspot-layer" class="hotspot-layer"></div>
+      <div class="map-footer">
+        <p class="map-hint">Tap a pin to explore this building</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-spaces" class="screen quiz-screen">
+    <div class="spaces-header">
+      <button class="map-back-btn" onclick="closeSpaces()">&#8592;</button>
+    </div>
+    <div class="spaces-sheet">
+      <div class="sheet-gallery" id="spaces-gallery"></div>
+      <div class="sheet-info">
+        <h2 class="sheet-name" id="spaces-name"></h2>
+        <p class="sheet-description" id="spaces-description"></p>
+        <div class="sheet-tags" id="spaces-tags"></div>
+        <div class="sheet-facilities" id="spaces-facilities" style="display:none;">
+          <div class="facilities-divider"></div>
+          <p class="facilities-label">You'll find here</p>
+          <div class="facilities-list" id="spaces-facilities-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="building-overlay" class="sheet-overlay" onclick="closeBuildingSheet(event)">
+    <div class="bottom-sheet" id="building-sheet">
+      <div class="sheet-handle-row">
+        <div class="modal-top-buttons">
+          <button class="modal-icon-btn" id="building-expand-btn" onclick="toggleBuildingExpand()">
+            <span id="building-expand-icon">⤢</span>
+          </button>
+          <button class="modal-icon-btn" onclick="closeBuildingSheet()">✕</button>
+        </div>
+      </div>
+      <div class="sheet-gallery" id="building-gallery"></div>
+      <div class="sheet-info">
+        <div class="sheet-title-row">
+          <div>
+            <h2 class="sheet-name" id="building-name"></h2>
+            <p class="sheet-code" id="building-code"></p>
+          </div>
+        </div>
+        <p class="sheet-description" id="building-description"></p>
+        <div class="sheet-tags" id="building-tags"></div>
+        <div class="sheet-facilities" id="building-facilities" style="display:none;">
+          <div class="facilities-divider"></div>
+          <p class="facilities-label">You'll find here</p>
+          <div class="facilities-list" id="building-facilities-list"></div>
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button class="start-btn" style="width:100%;" id="building-explore-btn">EXPLORE</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="hotspot-overlay" class="sheet-overlay" onclick="closeHotspotSheet(event)">
+    <div class="bottom-sheet" id="hotspot-sheet">
+      <div class="sheet-handle-row">
+        <div class="modal-top-buttons">
+          <button class="modal-icon-btn" id="hotspot-expand-btn" onclick="toggleHotspotExpand()">
+            <span id="hotspot-expand-icon">⤢</span>
+          </button>
+          <button class="modal-icon-btn" onclick="closeHotspotSheet()">✕</button>
+        </div>
+      </div>
+      <div class="sheet-gallery" id="hotspot-gallery"></div>
+      <div class="sheet-info">
+        <div class="sheet-title-row">
+          <div>
+            <h2 class="sheet-name" id="hotspot-name"></h2>
+            <p class="sheet-code" id="hotspot-code"></p>
+          </div>
+        </div>
+        <p class="sheet-description" id="hotspot-description"></p>
+        <div class="sheet-tags" id="hotspot-tags"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="quiz.js"></script>
+</body>
+</html>
